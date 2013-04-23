@@ -5,9 +5,9 @@ using System.Text;
 using SharpDX.DirectInput;
 
 
-namespace MoJ
+namespace MoJ.IO
 {
-    public class Joy:IDisposable
+    public class Joy : IDisposable
     {
 
         public event DeviceFoundEventHandler DeviceFound;
@@ -27,14 +27,15 @@ namespace MoJ
 
         public Joy(System.Windows.Forms.Form boundForm)
         {
-             state = new JoystickState();
-             _boundForm = boundForm;
-             dinput = new DirectInput();
+            state = new JoystickState();
+            _boundForm = boundForm;
+            dinput = new DirectInput();
         }
 
         public string Name
         {
-            get {
+            get
+            {
                 if (stick != null)
                 {
                     return stick.Information.InstanceName;
@@ -44,16 +45,16 @@ namespace MoJ
                     return string.Empty;
                 }
             }
-            
+
         }
 
         public void GetSticks()
         {
             using (Logger.Context("GetSticks"))
             {
-                
+
                 foreach (DeviceInstance device in dinput.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly))
-                {                    
+                {
                     Logger.Info(device.InstanceName);
                     sticks.Add(device.InstanceName, device);
                 }
@@ -68,6 +69,7 @@ namespace MoJ
         {
             ConnectDevice(sticks[key]);
         }
+
         public void ConnectDevice(DeviceInstance device)
         {
             using (Logger.Context("ConnectDevice"))
@@ -75,7 +77,7 @@ namespace MoJ
 
                 stick = new SharpDX.DirectInput.Joystick(dinput, device.InstanceGuid);
                 stick.SetCooperativeLevel(_boundForm, CooperativeLevel.Exclusive | CooperativeLevel.Background);
-                
+
                 if (stick == null)
                 {
                     throw new JoystickNotFoundException();
@@ -83,21 +85,12 @@ namespace MoJ
 
                 foreach (DeviceObjectInstance deviceObject in stick.GetObjects())
                 {
-                    //if ((deviceObject.ObjectType & ObjectDeviceType.Axis) != 0)
-                    //    stick.GetObjectPropertiesById((int)deviceObject.ObjectType).SetRange(-1000, 1000);
-
                     Logger.Debug("deviceObject {0}", deviceObject.Name);
                     UpdateControl(deviceObject);
                 }
 
                 // acquire the device
                 stick.Acquire();
-
-                // set the timer to go off 12 times a second to read input
-                // NOTE: Normally applications would read this much faster.
-                // This rate is for demonstration purposes only.
-                //timer1.Interval = 1000 / 12;
-                //timer1.Start();
             }
         }
 
@@ -155,7 +148,7 @@ namespace MoJ
             {
                 return;
             }
-            
+
 
             state = stick.GetCurrentState();
             //if (Result.Last.IsFailure)

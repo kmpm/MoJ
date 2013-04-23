@@ -7,13 +7,13 @@ namespace MoJ
 {
     public class DeviceFoundArguments
     {
-        public DeviceFoundArguments(Joy.DeviceType type, SharpDX.DirectInput.DeviceObjectInstance instance)
+        public DeviceFoundArguments(IO.Joy.DeviceType type, SharpDX.DirectInput.DeviceObjectInstance instance)
         {
             DeviceType = type;
             Instance = instance;
         }
 
-        public Joy.DeviceType DeviceType { get; private set; }
+        public IO.Joy.DeviceType DeviceType { get; private set; }
         public SharpDX.DirectInput.DeviceObjectInstance Instance { get; private set; }
     }
 

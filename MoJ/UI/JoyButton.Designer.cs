@@ -44,7 +44,7 @@
             // 
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(3, 5);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(18, 17);
             this.pictureBox1.TabIndex = 0;
@@ -64,9 +64,9 @@
             // 
             this._mode.FormattingEnabled = true;
             this._mode.Location = new System.Drawing.Point(123, 4);
-            this._mode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._mode.Margin = new System.Windows.Forms.Padding(2);
             this._mode.Name = "_mode";
-            this._mode.Size = new System.Drawing.Size(92, 21);
+            this._mode.Size = new System.Drawing.Size(90, 21);
             this._mode.TabIndex = 2;
             this._mode.Text = "Trigger";
             this._mode.TextUpdate += new System.EventHandler(this.Combo_TextUpdate);
@@ -76,7 +76,7 @@
             // 
             this._rising.FormattingEnabled = true;
             this._rising.Location = new System.Drawing.Point(258, 3);
-            this._rising.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._rising.Margin = new System.Windows.Forms.Padding(2);
             this._rising.Name = "_rising";
             this._rising.Size = new System.Drawing.Size(92, 21);
             this._rising.TabIndex = 3;
@@ -88,7 +88,7 @@
             // 
             this._falling.FormattingEnabled = true;
             this._falling.Location = new System.Drawing.Point(375, 3);
-            this._falling.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._falling.Margin = new System.Windows.Forms.Padding(2);
             this._falling.Name = "_falling";
             this._falling.Size = new System.Drawing.Size(92, 21);
             this._falling.TabIndex = 4;
@@ -123,7 +123,7 @@
             this.Controls.Add(this._mode);
             this.Controls.Add(this.nameLabel);
             this.Controls.Add(this.pictureBox1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximumSize = new System.Drawing.Size(472, 28);
             this.MinimumSize = new System.Drawing.Size(472, 28);
             this.Name = "JoyButton";

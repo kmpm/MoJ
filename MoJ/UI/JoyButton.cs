@@ -18,13 +18,15 @@ namespace MoJ.UI
         private bool _isRaised = false;
         private bool disableSave=true;
 
+        private Type optionType;
+
         public JoyButton()
         {
             InitializeComponent();
             _mode.Items.AddRange(Enum.GetNames(typeof(JoyButtonMode)));
-            _rising.Items.AddRange(Enum.GetNames(typeof(Mouse.MouseEventFlags)));
-            _falling.Items.AddRange(Enum.GetNames(typeof(Mouse.MouseEventFlags)));
+            
         }
+
 
         public string Caption
         {
@@ -36,8 +38,28 @@ namespace MoJ.UI
                 _mode.Text = Get("mode");
                 _rising.Text = Get("rising");
                 _falling.Text = Get("falling");
+                CheckMode();
                 disableSave = false;
             }
+        }
+
+        private void MouseOptions()
+        {
+            _rising.Items.Clear();
+            _falling.Items.Clear();
+            optionType = typeof(IO.Inputs.MouseEventFlags);
+            _rising.Items.AddRange(Enum.GetNames(optionType));
+            _falling.Items.AddRange(Enum.GetNames(optionType));
+        }
+
+        private void KeyOptions()
+        {
+            _rising.Items.Clear();
+            _falling.Items.Clear();
+
+            optionType = typeof(IO.Inputs.KeybdEventFlags);
+            _rising.Items.AddRange(Enum.GetNames(optionType));
+            _falling.Items.AddRange(Enum.GetNames(optionType));
         }
 
         private void Set(string name, string value)
@@ -60,19 +82,19 @@ namespace MoJ.UI
             }
         }
 
-        public Mouse.MouseEventFlags Rising
+        public object Rising
         {
             get
             {
-                return (Mouse.MouseEventFlags)Enum.Parse(typeof(Mouse.MouseEventFlags), _rising.Text);
+                return Enum.Parse(optionType, _rising.Text);
             }
         }
 
-        public Mouse.MouseEventFlags Falling
+        public object Falling
         {
             get
             {
-                return (Mouse.MouseEventFlags)Enum.Parse(typeof(Mouse.MouseEventFlags), _falling.Text);
+                return Enum.Parse(optionType, _falling.Text);
             }
         }
 
@@ -99,7 +121,7 @@ namespace MoJ.UI
             {
                 pictureBox1.BackColor = Color.Green;
 
-                if (Mode == JoyButtonMode.Toggle)
+                if (Mode == JoyButtonMode.ToggleMouse)
                 {
                     Toggle();
                 }
@@ -119,7 +141,7 @@ namespace MoJ.UI
                     pictureBox1.BackColor = Color.Gray;
                 }
 
-                if (Mode != JoyButtonMode.Toggle)
+                if (Mode != JoyButtonMode.ToggleMouse)
                 {
                     DoFalling();
                 }
@@ -128,14 +150,29 @@ namespace MoJ.UI
 
         private void DoRising()
         {
-            if (Rising == Mouse.MouseEventFlags.NONE) return;
-            Mouse.MouseEvent(Rising);
+            if ((int)Rising == 0) return;
+            if (optionType == typeof(IO.Inputs.MouseEventFlags))
+            {
+                IO.Inputs.MouseEvent((IO.Inputs.MouseEventFlags)Rising);
+            }
+            else
+            {
+                IO.Inputs.KeybdEvent((IO.Inputs.KeybdEventFlags)Rising);
+            }
+            
         }
         
         private void DoFalling()
         {
-            if (Falling == Mouse.MouseEventFlags.NONE) return;
-            Mouse.MouseEvent(Falling);
+            if ((int)Falling == 0) return;
+            if (optionType == typeof(IO.Inputs.MouseEventFlags))
+            {
+                IO.Inputs.MouseEvent((IO.Inputs.MouseEventFlags)Falling);
+            }
+            else
+            {
+                IO.Inputs.KeybdEvent((IO.Inputs.KeybdEventFlags)Falling);
+            }
         }
 
         private void Toggle()
@@ -159,6 +196,23 @@ namespace MoJ.UI
             Set("falling", _falling.Text);
             
             Config.Save();
+
+            if (((ComboBox)sender).Name == "_mode")
+            {
+                CheckMode();
+            }
+        }
+
+        private void CheckMode()
+        {
+            if (_mode.Text.Contains("Key"))
+            {
+                KeyOptions();
+            }
+            else
+            {
+                MouseOptions();
+            }
         }
     }
 }

@@ -11,13 +11,15 @@ namespace MoJ.UI
 {
     public partial class MainForm : Form
     {
-        Joy Joy;
+        IO.Joy Joy;
         public MainForm()
         {
             InitializeComponent();
-            Joy = new Joy(this);
+
+            Joy = new IO.Joy(this);
             Joy.DeviceFound += new DeviceFoundEventHandler(Joy_DeviceFound);
             Joy.JoystickStateChanged += new JoystickStateEventHandler(Joy_JoystickStateChanged);
+
         }
 
         void Joy_JoystickStateChanged(object sender, SharpDX.DirectInput.JoystickState s)
@@ -34,7 +36,7 @@ namespace MoJ.UI
         {
             switch (e.DeviceType)
             {
-                case MoJ.Joy.DeviceType.Button:
+                case MoJ.IO.Joy.DeviceType.Button:
                     AddButton(e.Instance.Name);
                     break;
 
@@ -55,6 +57,7 @@ namespace MoJ.UI
             string oldstick = Config.Get("joystick");
             try
             {
+
                 Joy.GetSticks();
                 foreach (string name in Joy.sticks.Keys)
                 {
@@ -64,15 +67,20 @@ namespace MoJ.UI
                         joystickName.SelectedItem = name;
                     }
                    
-                }
-
-                
+                }  
 
             }
             catch (JoystickNotFoundException ex)
             {
-                MessageBox.Show(ex.Message);
+#if DEMO
+                AddButton("Demo 1");
+                AddButton("Demo 2");
+                AddButton("Demo 3");
+                AddButton("Demo 4");
+#else
 
+                MessageBox.Show(ex.Message);
+#endif
             }
         }
 

@@ -7,7 +7,9 @@ namespace MoJ.UI
 {
     public enum JoyButtonMode
     {
-        Trigger = 0,
-        Toggle
+        TriggerMouse = 0,
+        ToggleMouse,
+        TriggerKey,
+        ToggleKey
     }
 }
