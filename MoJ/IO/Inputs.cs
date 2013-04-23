@@ -23,10 +23,10 @@ namespace MoJ.IO
             RightUp = 0x00000010,
         }
 
-        public const byte KEYBDEVENTF_SHIFTVIRTUAL = 0x10;
-        public const byte KEYBDEVENTF_SHIFTSCANCODE = 0x2A;
-        public const int KEYBDEVENTF_KEYDOWN = 0;
-        public const int KEYBDEVENTF_KEYUP = 2;
+        private const byte KEYBDEVENTF_SHIFTVIRTUAL = 0x10;
+        private const byte KEYBDEVENTF_SHIFTSCANCODE = 0x2A;
+        private const int KEYBDEVENTF_KEYDOWN = 0;
+        private const int KEYBDEVENTF_KEYUP = 2;
 
         public enum KeybdEventFlags
         {
@@ -58,7 +58,7 @@ namespace MoJ.IO
         private static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
 
         [DllImport("user32.dll", EntryPoint = "keybd_event", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern void keybd_event(byte vk, byte scan, int flags, int extrainfo);
+        private static extern void keybd_event(byte vk, byte scan, int flags, int extrainfo);
 
         public static MousePoint GetCursorPosition()
         {

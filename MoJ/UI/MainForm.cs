@@ -12,6 +12,10 @@ namespace MoJ.UI
     public partial class MainForm : Form
     {
         IO.Joy Joy;
+        private Logger log = new Logger("MainForm");
+        FlowLayoutPanel povsPanel;
+        FlowLayoutPanel sliderPanel;
+
         public MainForm()
         {
             InitializeComponent();
@@ -22,13 +26,29 @@ namespace MoJ.UI
 
         }
 
-        void Joy_JoystickStateChanged(object sender, SharpDX.DirectInput.JoystickState s)
+        void Joy_JoystickStateChanged(object sender, SharpDX.DirectInput.JoystickState state)
         {
-            bool[] buttons = s.Buttons;
+            bool[] buttons = state.Buttons;
             for (int i = 0; i < buttonPanel.Controls.Count; i++)
             {
                 var b = (JoyButton)buttonPanel.Controls[i];
                 b.State = buttons[i];
+            }
+            if (povsPanel != null && povsPanel.Controls.Count > 0)
+            {
+                int[] povs = state.PointOfViewControllers;
+                for (int i = 0; i < povsPanel.Controls.Count; i++)
+                {
+                    var p = (JoyPov)povsPanel.Controls[i];
+                    p.State = povs[i];
+                }
+            }
+            if (sliderPanel != null && sliderPanel.Controls.Count > 0)
+            {
+                for(int i=0; i<sliderPanel.Controls.Count; i++){
+                    var c = (JoySlider)sliderPanel.Controls[i];
+                    c.State = state.Sliders[i];
+                }
             }
         }
 
@@ -39,8 +59,53 @@ namespace MoJ.UI
                 case MoJ.IO.Joy.DeviceType.Button:
                     AddButton(e.Instance.Name);
                     break;
-
+                case IO.Joy.DeviceType.Pov:
+                    log.Debug("Pov detected");
+                    AddPov(e.Instance.Name);
+                    break;
+                case IO.Joy.DeviceType.Slider:
+                    AddSlider(e.Instance.Name);
+                    break;
+                default:
+                    log.Debug("unknown device detected '{0}'", e.Instance.Name);
+                    break;
             }
+        }
+
+        private void AddSlider(string name)
+        {
+            if (sliderPanel == null)
+            {
+                var tp = new TabPage("Sliders");
+                tabControl1.TabPages.Add(tp);
+                sliderPanel = new FlowLayoutPanel();
+                sliderPanel.Name = "sliderPanel";
+                tp.Controls.Add(sliderPanel);
+                sliderPanel.Dock = DockStyle.Fill;
+            }
+            JoySlider s = new JoySlider();
+            s.Caption = name;
+            s.Name = name;
+            sliderPanel.Controls.Add(s);
+        }
+
+        private void AddPov(string name)
+        {
+            if (povsPanel == null)
+            {
+                povsPanel = new FlowLayoutPanel() { Name = "Povs" };
+                var tp = new TabPage("Point of View");
+                tabControl1.TabPages.Add(tp);
+                tp.Controls.Add(povsPanel);
+                povsPanel.Dock = DockStyle.Fill;
+            }
+            JoyPov p = new JoyPov()
+            {
+                Name = name,
+                Caption = name
+            };
+
+            povsPanel.Controls.Add(p);
         }
 
         private JoyButton AddButton(string name)
@@ -66,8 +131,8 @@ namespace MoJ.UI
                     {
                         joystickName.SelectedItem = name;
                     }
-                   
-                }  
+
+                }
 
             }
             catch (JoystickNotFoundException ex)

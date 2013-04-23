@@ -78,7 +78,15 @@ namespace MoJ.UI
         {
             get
             {
-                return (JoyButtonMode)Enum.Parse(typeof(JoyButtonMode), _mode.Text);
+                JoyButtonMode m;
+                if (Enum.TryParse(_mode.Text, out m))
+                {
+                    return m;
+                }
+                else
+                {
+                    return JoyButtonMode.TriggerMouse;
+                }
             }
         }
 
@@ -86,6 +94,7 @@ namespace MoJ.UI
         {
             get
             {
+                if (_rising.Text == string.Empty) return null;
                 return Enum.Parse(optionType, _rising.Text);
             }
         }
@@ -94,6 +103,7 @@ namespace MoJ.UI
         {
             get
             {
+                if (_falling.Text == string.Empty) return null;
                 return Enum.Parse(optionType, _falling.Text);
             }
         }
@@ -134,11 +144,11 @@ namespace MoJ.UI
             {
                 if (_isRaised)
                 {
-                    pictureBox1.BackColor = Color.LightYellow;
+                    pictureBox1.BackColor = Color.Red;
                 }
                 else
                 {
-                    pictureBox1.BackColor = Color.Gray;
+                    pictureBox1.BackColor = SystemColors.Control;
                 }
 
                 if (Mode != JoyButtonMode.ToggleMouse)
@@ -150,6 +160,7 @@ namespace MoJ.UI
 
         private void DoRising()
         {
+            if (Rising == null) return;
             if ((int)Rising == 0) return;
             if (optionType == typeof(IO.Inputs.MouseEventFlags))
             {
@@ -164,6 +175,7 @@ namespace MoJ.UI
         
         private void DoFalling()
         {
+            if (Falling == null) return;
             if ((int)Falling == 0) return;
             if (optionType == typeof(IO.Inputs.MouseEventFlags))
             {

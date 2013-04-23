@@ -106,6 +106,18 @@
     <Compile Include="UI\JoyButton.Designer.cs">
       <DependentUpon>JoyButton.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\JoyPov.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\JoyPov.Designer.cs">
+      <DependentUpon>JoyPov.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\JoySlider.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\JoySlider.Designer.cs">
+      <DependentUpon>JoySlider.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -123,6 +135,12 @@
     </Compile>
     <EmbeddedResource Include="UI\JoyButton.resx">
       <DependentUpon>JoyButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\JoyPov.resx">
+      <DependentUpon>JoyPov.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\JoySlider.resx">
+      <DependentUpon>JoySlider.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

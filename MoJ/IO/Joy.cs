@@ -22,7 +22,10 @@ namespace MoJ.IO
         public enum DeviceType
         {
             Unknown = 0,
-            Button
+            Button,
+            Pov,
+            HatSwitch,
+            Slider
         }
 
         public Joy(System.Windows.Forms.Form boundForm)
@@ -108,11 +111,19 @@ namespace MoJ.IO
 
         void UpdateControl(DeviceObjectInstance d)
         {
-
             if (ObjectGuid.Button == d.ObjectType)
             {
                 OnDeviceFound(DeviceType.Button, d);
                 return;
+            }
+            else if (ObjectGuid.PovController == d.ObjectType)
+            {
+                OnDeviceFound(DeviceType.Pov, d);
+                return;
+            }
+            else if (ObjectGuid.Slider == d.ObjectType)
+            {
+                OnDeviceFound(DeviceType.Slider, d);
             }
             else
             {
