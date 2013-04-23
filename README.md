@@ -2,6 +2,8 @@ MoJ - Mouse of Joy
 ==================
 Mouse emulation using Joystick.
 
+![Logo](MoJ.png)
+
 Began as a frustration where the supplied software for JoyBox 
 ( http://www.anycom.se/products/joybox/ ) only did click when a button was
 activated. There were no way to do press and hold.
