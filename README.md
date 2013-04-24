@@ -6,7 +6,7 @@ Mouse emulation using Joystick.
 
 Began as a frustration where the supplied software for JoyBox 
 ( http://www.anycom.se/products/joybox/ ) only did click when a button was
-activated. There were no way to do press and hold.
+activated. There were no way to do press and hold as I wanted.
 
 
 
