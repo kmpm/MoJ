@@ -6,10 +6,26 @@ using System.Runtime.InteropServices;
 
 namespace MoJ
 {
+    /*
+     * http://stackoverflow.com/questions/4596163/sendinput-keys-in-win32-win64-machines
+     * 
+     * 
+     */
     internal class NativeWIN32
     {
-        public const ushort KEYEVENTF_KEYUP = 0x0002;
+
+
+
+        public const uint INPUT_MOUSE = 0;
+        public const uint INPUT_KEYBOARD = 1;
+        public const uint INPUT_HARDWARE = 2;
+
         public const ushort KEYEVENTF_KEYDOWN = 0x0;
+        public const ushort KEYEVENTF_EXTENDEDKEY = 0x0001;
+        public const ushort KEYEVENTF_KEYUP = 0x0002;
+        public const ushort KEYEVENTF_UNICODE = 0x0004;
+        public const ushort KEYEVENTF_SCANCODE = 0x0008;
+        
 
         public enum VK : ushort
         {
@@ -78,13 +94,34 @@ namespace MoJ
             RWIN = 0x5C
         }
 
+        /// <summary>
+        /// http://msdn.microsoft.com/en-us/library/windows/desktop/ms646271(v=vs.85).aspx
+        /// </summary>
+        
+        [StructLayout(LayoutKind.Sequential)]
         public struct KEYBDINPUT
         {
+            /*Virtual Key code.  Must be from 1-254.  If the dwFlags member specifies KEYEVENTF_UNICODE, wVk must be 0.*/
             public ushort wVk;
+            /*A hardware scan code for the key. If dwFlags specifies KEYEVENTF_UNICODE, wScan specifies a Unicode character which is to be sent to the foreground application.*/
             public ushort wScan;
+            /*Specifies various aspects of a keystroke.  See the KEYEVENTF_ constants for more information.*/
             public uint dwFlags;
+            /*The time stamp for the event, in milliseconds. If this parameter is zero, the system will provide its own time stamp.*/
             public long time;
-            public uint dwExtraInfo;
+            /*An additional value associated with the keystroke. Use the GetMessageExtraInfo function to obtain this information.*/
+            public IntPtr dwExtraInfo;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MOUSEINPUT
+        {
+            public int dx;
+            public int dy;
+            public uint mouseData;
+            public uint dwFlags;
+            public uint time;
+            public IntPtr dwExtraInfo;
         }
 
         [StructLayout(LayoutKind.Explicit, Size = 28)]
@@ -94,9 +131,41 @@ namespace MoJ
             public uint type;
             [FieldOffset(4)]
             public KEYBDINPUT ki;
+            
         }
 
         [DllImport("user32.dll")]
-        public static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
+        public static extern int MapVirtualKey(uint uCode, uint uMapType);
+
+        [DllImport("user32.dll")]
+        public static extern short VkKeyScan(char ch);
+
+        [DllImport("user32.dll", EntryPoint = "keybd_event", CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern void keybd_event(byte vk, byte scan, int flags, int extrainfo);
+
+        [DllImport("user32.dll")]
+        public static extern uint SendInput(uint nInputs, ref INPUT[] pInputs, int cbSize);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr GetMessageExtraInfo();
+
+
+        public static void SendUnicodeChar(char input)
+        {
+            var inputStruct = new INPUT();
+            inputStruct.type = INPUT_KEYBOARD;
+            inputStruct.ki.wVk = 0;
+            inputStruct.ki.wScan = input;
+            inputStruct.ki.time = 0;
+            var flags = KEYEVENTF_UNICODE;
+            inputStruct.ki.dwFlags = flags;
+            inputStruct.ki.dwExtraInfo = GetMessageExtraInfo();
+
+            INPUT[] ip = { inputStruct };
+            SendInput(1, ref ip, Marshal.SizeOf(inputStruct));
+        }
+       
+
+        
     }
 }

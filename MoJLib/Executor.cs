@@ -91,19 +91,10 @@ namespace MoJ
          * 
         */
 
-      
-        NativeWIN32
         public static byte KEYBDEVENTF_SHIFTSCANCODE = 0x2A;
         
 
-        [DllImport("user32.dll", EntryPoint = "keybd_event", CharSet = CharSet.Auto, ExactSpelling = true)]
-        private static extern void keybd_event(byte vk, byte scan, int flags, int extrainfo);
-
-        [DllImport("user32.dll")]
-        static extern int MapVirtualKey(uint uCode, uint uMapType);
-
-        [DllImport("user32.dll")]
-        static extern short VkKeyScan(char ch);
+        
 
 
 
@@ -120,7 +111,7 @@ namespace MoJ
 
         private static Helper toHelper(char c)
         {
-            return new Helper { Value = VkKeyScan(c) };
+            return new Helper { Value = NativeWIN32.VkKeyScan(c) };
         }
 
         public static string fromHelper(Helper h)
@@ -258,9 +249,9 @@ namespace MoJ
             foreach (Helper h in keyList)
             {
                 if (keyDown)
-                    keybd_event(h.VirtualKey, h.ScanCode, KEYBDEVENTF_KEYDOWN, 0);
+                    NativeWIN32.keybd_event(h.VirtualKey, h.ScanCode, KEYBDEVENTF_KEYDOWN, 0);
                 if (keyUp)
-                    keybd_event(h.VirtualKey, h.ScanCode, KEYBDEVENTF_KEYUP, 0);
+                    NativeWIN32.keybd_event(h.VirtualKey, h.ScanCode, KEYBDEVENTF_KEYUP, 0);
 
             }
         }
