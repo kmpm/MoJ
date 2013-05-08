@@ -1,0 +1,16 @@
+﻿{
+  "Name": "Testtask",
+  "Description": "For testing only",
+  "Actions": {
+    "1": {
+      "Method": "KeyDown",
+      "Data": "@shift",
+      "Delay": 1000
+    },
+    "2": {
+      "Method": "MouseButtonDown",
+      "Data": "@left",
+      "Delay": 0
+    }
+  }
+}

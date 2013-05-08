@@ -10,6 +10,9 @@ namespace MoJ
 
         ActionCollection _actions;
 
+        public String Name { get; set; }
+        public String Description { get; set; }
+
         public Task()
         {
             _actions = new ActionCollection();

@@ -2,4 +2,7 @@
 *.user
 bin/
 obj/
+TestResults/
+packages/
+
 *TemporaryKey.pfx

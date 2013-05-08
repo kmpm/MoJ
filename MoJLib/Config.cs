@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace MoJ
 {
@@ -10,6 +11,14 @@ namespace MoJ
     {
         private static string filename = "settings.txt";
         private static Dictionary<string, string> values = new Dictionary<string,string>();
+
+
+        public static string Serialize(Task t)
+        {
+            string output = JsonConvert.SerializeObject(t, Formatting.Indented);
+            return output;
+        }
+
         static Config()
         {
             if (System.IO.File.Exists(filename))
