@@ -91,7 +91,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config.cs" />
     <Compile Include="DelegatesAndArguments.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="IO\Joy.cs" />
@@ -181,6 +180,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="MoJ.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MoJLib\MoJLib.csproj">
+      <Project>{B123ADCC-34F1-4E6B-8616-C093DB719E81}</Project>
+      <Name>MoJLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

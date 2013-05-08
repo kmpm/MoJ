@@ -37,9 +37,10 @@
             // heading
             // 
             this.heading.AutoSize = true;
-            this.heading.Location = new System.Drawing.Point(3, 27);
+            this.heading.Location = new System.Drawing.Point(2, 22);
+            this.heading.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.heading.Name = "heading";
-            this.heading.Size = new System.Drawing.Size(73, 17);
+            this.heading.Size = new System.Drawing.Size(58, 13);
             this.heading.TabIndex = 0;
             this.heading.Text = "NEUTRAL";
             this.heading.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -47,9 +48,10 @@
             // caption
             // 
             this.caption.AutoSize = true;
-            this.caption.Location = new System.Drawing.Point(3, 0);
+            this.caption.Location = new System.Drawing.Point(2, 0);
+            this.caption.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.caption.Name = "caption";
-            this.caption.Size = new System.Drawing.Size(54, 17);
+            this.caption.Size = new System.Drawing.Size(42, 13);
             this.caption.TabIndex = 1;
             this.caption.Text = "caption";
             // 
@@ -60,18 +62,20 @@
             this.panel1.Controls.Add(this.heading);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(137, 67);
+            this.panel1.Size = new System.Drawing.Size(103, 54);
             this.panel1.TabIndex = 2;
             // 
             // JoyPov
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel1);
-            this.MinimumSize = new System.Drawing.Size(137, 67);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MinimumSize = new System.Drawing.Size(103, 54);
             this.Name = "JoyPov";
-            this.Size = new System.Drawing.Size(137, 67);
+            this.Size = new System.Drawing.Size(103, 54);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
