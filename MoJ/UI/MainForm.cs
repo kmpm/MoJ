@@ -2,6 +2,8 @@
 //#define SLIDER
 //#define POV
 
+// Copyright (C) 2013 Peter Magnusson
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
