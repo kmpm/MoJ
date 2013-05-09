@@ -18,7 +18,7 @@ namespace MoJ.UI
     public partial class MainForm : Form
     {
         IO.Joy Joy;
-        private Logger log = new Logger("MainForm");
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         FlowLayoutPanel povsPanel;
         FlowLayoutPanel sliderPanel;
         FlowLayoutPanel buttonPanel;
@@ -87,7 +87,7 @@ namespace MoJ.UI
                     break;
 #endif
                 default:
-                    log.Debug("unknown device detected '{0}'", e.Instance.Name);
+                    log.WarnFormat("unknown device detected '{0}'", e.Instance.Name);
                     break;
             }
         }
@@ -156,7 +156,8 @@ namespace MoJ.UI
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
-            string oldstick = Config.Get("joystick");
+            string oldstick = Current.Config.Get("joystick");
+            tasksEditorControl1.Tasks = Current.Config.Tasks;
             try
             {
 
@@ -180,8 +181,8 @@ namespace MoJ.UI
 
         private void StartPolling()
         {
-            Config.Set("joystick", joystickName.Text);
-            Config.Save();
+            Current.Config.Set("joystick", joystickName.Text);
+            Current.Config.Save();
             Joy.ConnectDevice(joystickName.Text);
             timer1.Interval = 1000 / 12;
             timer1.Start();
@@ -200,6 +201,7 @@ namespace MoJ.UI
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Current.Config.Save();
             Joy.ReleaseDevice();
             Joy.Dispose();
         }
@@ -208,6 +210,12 @@ namespace MoJ.UI
         {
             StopPolling();
             StartPolling();
+        }
+
+        private void tabPageTasks_Leave(object sender, EventArgs e)
+        {
+            //Save config when we leave tasks.
+            Current.Config.Save();
         }
     }
 }

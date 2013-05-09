@@ -26,13 +26,13 @@ namespace MoJLib.Test
                 Name ="Testtask",
                 Description="For testing only"
             };
-            t.Actions.Add(1, new MoJ.Action
+            t.Actions.Add(new MoJ.Action
             {
                 Method = ActionMethod.KeyDown,
                 Delay = 1000,
                 Data = "@shift"
             });
-            t.Actions.Add(2, new MoJ.Action{
+            t.Actions.Add(new MoJ.Action{
                 Method = ActionMethod.MouseButtonDown,
                 Data="@left"
             });

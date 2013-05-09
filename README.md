@@ -12,10 +12,14 @@ Techical
 --------
  * .NET 4.0 Client Profile
  * SharpDX - Managed DirectX (for joystick input)
+ * http://inputsimulator.codeplex.com/
 
 
 License
 -------
+
+
+
 MoJ is an open-source project, free of charge available 
 under the following MIT License:
 

@@ -18,14 +18,51 @@ namespace MoJ
     }
 
 
-
     public class Action
     {
-        public ActionMethod Method { get; set; }
+        private ActionMethod _method = ActionMethod.MouseButtonClick;
+        private String _data = String.Empty;
+        private int _delay = 0;
 
-        public String Data { get; set; }
+        public event EventHandler PropertyChanged;
 
-        public int Delay { get; set; }
+        public ActionMethod Method
+        {
+            get { return _method; }
+            set
+            {
+                _method = value;
+                OnPropertyChanged("Method");
+            }
+        }
+
+        public String Data
+        {
+            get { return _data; }
+            set
+            {
+                _data = value;
+                OnPropertyChanged("Data");
+            }
+        }
+
+        public int Delay
+        {
+            get { return _delay; }
+            set
+            {
+                _delay = value;
+                OnPropertyChanged("Delay");
+            }
+        }
+
+        protected void OnPropertyChanged(string name)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new EventArgs());
+            }
+        }
     }
 
 }

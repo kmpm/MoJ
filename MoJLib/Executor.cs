@@ -12,6 +12,8 @@ namespace MoJ
     {
 
 
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+      
 
         #region Mouse Functions
 
@@ -79,59 +81,131 @@ namespace MoJ
 
         #endregion
 
-
-        #region Keyboard functions
-        /*
-         * http://www.pinvoke.net/default.aspx/user32.keybd_event
-         * http://www.pinvoke.net/default.aspx/user32/MapVirtualKey.html
-         * http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
-         * http://stackoverflow.com/questions/2934557/convert-character-to-the-corresponding-virtual-key-code
-         * http://social.msdn.microsoft.com/Forums/en-US/windowscompatibility/thread/627b1c8c-0b75-4f73-9e29-3e17e93d539a
-         * 
-         * 
-        */
-
-        public static byte KEYBDEVENTF_SHIFTSCANCODE = 0x2A;
-        
-
-        
-
-
-
-        [StructLayout(LayoutKind.Explicit)]
-        public struct Helper
+        public static void RunThreaded(Task t)
         {
-            [FieldOffset(0)]
-            public short Value;
-            [FieldOffset(0)]
-            public byte VirtualKey;
-            [FieldOffset(1)]
-            public byte ScanCode;
+            Thread thread = new Thread(RunThreadTask);
+
+            thread.Start(t);
         }
 
-        private static Helper toHelper(char c)
+        private static void RunThreadTask(object o)
         {
-            return new Helper { Value = NativeWIN32.VkKeyScan(c) };
+            Run((Task)o);
         }
 
-        public static string fromHelper(Helper h)
+        public static void Run(Task t)
         {
-            string buffer = "";
-            byte shiftState = h.ScanCode;
-            if ((shiftState & 1) != 0) buffer += "{shift}";
-            if ((shiftState & 2) != 0) buffer += "{ctrl}";
-            if ((shiftState & 4) != 0) buffer += "{alt}";
-
-            return buffer;
+            using (log4net.ThreadContext.Stacks["NDC"].Push("Run(Task '" + t.Name + "')"))
+            {
+                foreach (Action a in t.Actions)
+                {
+                    Run(a);
+                }
+            }
+        }
+        public static void Run(Action a)
+        {
+            using (log4net.ThreadContext.Stacks["NDC"].Push("Run(Action)"))
+            {
+                switch (a.Method)
+                {
+                    case ActionMethod.MouseButtonClick:
+                    case ActionMethod.MouseButtonDown:
+                    case ActionMethod.MouseButtonUp:
+                        RunMouse(a);
+                        break;
+                    default:
+                        RunKeyboard(a);
+                        break;
+                }
+                if (a.Delay > 0)
+                {
+                    if (log.IsDebugEnabled) log.DebugFormat("Sleeping for {0}ms", a.Delay);
+                    Thread.Sleep(a.Delay);
+                }
+            }
         }
 
-        public static List<Helper> parseKeyboardData(string data)
+
+
+        private static void RunMouse(Action a)
         {
-            
-            List<Helper> keyList = new List<Helper>();
+            using (log4net.ThreadContext.Stacks["NDC"].Push("RunMouse"))
+            {
+                CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+                TextInfo textInfo = cultureInfo.TextInfo;
+
+                string flag = Enum.GetName(typeof(ActionMethod), a.Method).Replace("MouseButton", "");
+
+                flag = textInfo.ToTitleCase(a.Data) + flag;
+
+                MouseEventFlags mef = (MouseEventFlags)Enum.Parse(typeof(MouseEventFlags), flag);
+                MouseEvent(mef);
+            }
+        }
+
+
+
+        /// <summary>
+        /// {shift} = KEYBDEVENTF_SHIFTVIRTUAL
+        /// </summary>
+        /// <param name="a"></param>
+        private static void RunKeyboard(Action a)
+        {
+            using (log4net.ThreadContext.Stacks["NDC"].Push("RunKeyboard"))
+            {
+
+
+                bool keyDown = false;
+                bool keyUp = false;
+
+                switch (a.Method)
+                {
+                    case ActionMethod.KeyDown:
+                        keyDown = true;
+                        break;
+                    case ActionMethod.KeyUp:
+                        keyUp = true;
+                        break;
+                    default:
+                        keyUp = true;
+                        keyDown = true;
+                        break;
+                }
+
+                if (log.IsDebugEnabled) log.DebugFormat("keyDown:{0}, keyUp:{1}", keyDown, keyUp);
+
+                var keyList = parseKeyboardData(a.Data);
+
+                var inputList = new List<NativeWIN32.INPUT>();
+                foreach (NativeWIN32.INPUT input in keyList)
+                {
+                    var flags = input.ki.dwFlags;
+                    var i = input;
+                    if (keyDown)
+                    {
+                        i.ki.dwFlags = flags | NativeWIN32.KEYEVENTF_KEYDOWN;
+                        inputList.Add(i);
+                    }
+                    if (keyUp)
+                    {
+                        i.ki.dwFlags = flags | NativeWIN32.KEYEVENTF_KEYUP;
+                        inputList.Add(i);
+                    }
+                }
+                var inputs = inputList.ToArray();
+                if(log.IsDebugEnabled) log.DebugFormat("Sending {0} keystrokes", inputs.Length);
+                NativeWIN32.SendInput(1, ref inputs, Marshal.SizeOf(inputs));
+            }
+        }
+
+        public static List<NativeWIN32.INPUT> parseKeyboardData(string data)
+        {
+
+            var keyList = new List<NativeWIN32.INPUT>();
 
             bool tag = false;
-            string buffer = string.Empty;;
+            string buffer = string.Empty; ;
             for (int i = 0; i < data.Length; i++)
             {
                 char c = data[i];
@@ -144,10 +218,16 @@ namespace MoJ
                         switch (buffer.ToLower())
                         {
                             case "shift":
-                                var h = new Helper();
-                                h.VirtualKey = (byte)VirtualKeys.VK_SHIFT;
-                                h.ScanCode = KEYBDEVENTF_SHIFTSCANCODE;
-                                keyList.Add(h);
+                                var input = new NativeWIN32.INPUT
+                                {
+                                    type = NativeWIN32.INPUT_KEYBOARD,
+                                    ki = new NativeWIN32.KEYBDINPUT
+                                    {
+                                        wVk = (ushort)NativeWIN32.VK.SHIFT,
+                                        wScan = NativeWIN32.KEYEVENTSCAN_SHIFTSCANCODE,
+                                    }
+                                };
+                                keyList.Add(input);
                                 break;
                         }
                         continue;
@@ -168,92 +248,21 @@ namespace MoJ
                     }
                     else
                     {
-                        keyList.Add(toHelper(c));
+                        var input = new NativeWIN32.INPUT
+                        {
+                            type = NativeWIN32.INPUT_KEYBOARD,
+                            ki = new NativeWIN32.KEYBDINPUT
+                            {
+                                wVk = 0,
+                                wScan = c,
+                                dwFlags = NativeWIN32.KEYEVENTF_UNICODE
+                            }
+                        };
+                        keyList.Add(input);
                     }
                 }
             }
             return keyList;
-        }
-
-        #endregion
-
-
-
-        public static void Run(Action a)
-        {
-            switch (a.Method)
-            {
-                case ActionMethod.MouseButtonClick:
-                case ActionMethod.MouseButtonDown:
-                case ActionMethod.MouseButtonUp:
-                    RunMouse(a);
-                    break;
-                default:
-                    RunKeyboard(a);
-                    break;
-            }
-            if (a.Delay > 0)
-                Thread.Sleep(a.Delay);
-        }
-
-
-
-        private static void RunMouse(Action a)
-        {
-            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
-            TextInfo textInfo = cultureInfo.TextInfo;
-
-            string flag = Enum.GetName(typeof(ActionMethod), a.Method).Replace("MouseButton", "");
-
-            flag = textInfo.ToTitleCase(a.Data.Replace("@", "")) + flag;
-
-            MouseEventFlags mef = (MouseEventFlags)Enum.Parse(typeof(MouseEventFlags), flag);
-            MouseEvent(mef);
-        }
-
-
-
-        /// <summary>
-        /// {shift} = KEYBDEVENTF_SHIFTVIRTUAL
-        /// </summary>
-        /// <param name="a"></param>
-        private static void RunKeyboard(Action a)
-        {
-
-           
-
-            int KEYBDEVENTF_KEYDOWN = 0;
-            int KEYBDEVENTF_KEYUP = 2;
-
-            bool keyDown = false;
-            bool keyUp = false;
-
-            switch (a.Method)
-            {
-                case ActionMethod.KeyDown:
-                    keyDown = true;
-                    break;
-                case ActionMethod.KeyUp:
-                    keyUp = true;
-                    break;
-                default:
-                    keyUp = true;
-                    keyDown = true;
-                    break;
-            }
-
-
-            var keyList = parseKeyboardData(a.Data);
-
-
-            foreach (Helper h in keyList)
-            {
-                if (keyDown)
-                    NativeWIN32.keybd_event(h.VirtualKey, h.ScanCode, KEYBDEVENTF_KEYDOWN, 0);
-                if (keyUp)
-                    NativeWIN32.keybd_event(h.VirtualKey, h.ScanCode, KEYBDEVENTF_KEYUP, 0);
-
-            }
         }
 
     }

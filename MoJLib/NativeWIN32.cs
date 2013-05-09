@@ -9,9 +9,18 @@ namespace MoJ
     /*
      * http://stackoverflow.com/questions/4596163/sendinput-keys-in-win32-win64-machines
      * 
+     * http://www.pinvoke.net/default.aspx/user32.keybd_event
+     * http://www.pinvoke.net/default.aspx/user32/MapVirtualKey.html
+     * http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
+     * http://stackoverflow.com/questions/2934557/convert-character-to-the-corresponding-virtual-key-code
+     * http://social.msdn.microsoft.com/Forums/en-US/windowscompatibility/thread/627b1c8c-0b75-4f73-9e29-3e17e93d539a
+     * 
+     * 
+     *  
+     * 
      * 
      */
-    internal class NativeWIN32
+    public class NativeWIN32
     {
 
 
@@ -25,6 +34,8 @@ namespace MoJ
         public const ushort KEYEVENTF_KEYUP = 0x0002;
         public const ushort KEYEVENTF_UNICODE = 0x0004;
         public const ushort KEYEVENTF_SCANCODE = 0x0008;
+        
+        public const ushort KEYEVENTSCAN_SHIFTSCANCODE = 0x002A;
         
 
         public enum VK : ushort

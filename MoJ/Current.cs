@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
 namespace MoJ
 {
-    public class ActionCollection: ObservableCollection<Action>
+    static class Current
     {
-
+        public static MoJ.Config Config = MoJ.Config.LoadConfig();
     }
 }

@@ -70,8 +70,13 @@ namespace MoJLib.Test
         [TestMethod()]
         public void SaveTest()
         {
-            Config.Save();
-            Assert.Inconclusive("A method that does not return a value cannot be verified.");
+            var f = "savetest.json";
+            var config = new MoJ.Config();
+            config.SaveConfig(f);
+            Assert.IsTrue(System.IO.File.Exists(f));
+
+            var c2 = Newtonsoft.Json.JsonConvert.DeserializeObject<MoJ.Config>(System.IO.File.ReadAllText(f));
+            
         }
     }
 }

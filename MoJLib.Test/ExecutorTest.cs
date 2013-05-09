@@ -91,12 +91,14 @@ namespace MoJLib.Test
             };
 
             var list = MoJ.Executor.parseKeyboardData(a.Data);
-            var b = MoJ.Executor.fromHelper(list[0]);
+            
+            Assert.AreEqual(NativeWIN32.INPUT_KEYBOARD, list[0].type);
+            Assert.AreEqual((ushort)NativeWIN32.VK.SHIFT, list[0].ki.wVk);
             //Assert.AreEqual(MoJ.VirtualKeys.VK_SHIFT, list[0].VirtualKey);
             //Assert.AreEqual(MoJ.Executor.KEYBDEVENTF_SHIFTSCANCODE, list[0].ScanCode);
 
 
-            b = MoJ.Executor.fromHelper(list[1]);
+            //b = MoJ.Executor.fromHelper(list[1]);
             //Assert.AreEqual(MoJ.VirtualKeys.VK_SHIFT, list[1].VirtualKey);
             //Assert.AreEqual(MoJ.Executor.KEYBDEVENTF_SHIFTSCANCODE, list[1].ScanCode);
         }

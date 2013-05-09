@@ -43,35 +43,20 @@ namespace MoJ.UI
             }
         }
 
-        private void MouseOptions()
-        {
-            _rising.Items.Clear();
-            _falling.Items.Clear();
-            optionType = typeof(IO.Inputs.MouseEventFlags);
-            _rising.Items.AddRange(Enum.GetNames(optionType));
-            _falling.Items.AddRange(Enum.GetNames(optionType));
-        }
+       
 
-        private void KeyOptions()
-        {
-            _rising.Items.Clear();
-            _falling.Items.Clear();
-
-            optionType = typeof(IO.Inputs.KeybdEventFlags);
-            _rising.Items.AddRange(Enum.GetNames(optionType));
-            _falling.Items.AddRange(Enum.GetNames(optionType));
-        }
+       
 
         private void Set(string name, string value)
         {
             name = nameLabel.Text + "_" + name;
-            Config.Set(name, value);
+            Current.Config.Set(name, value);
         }
 
         private string Get(string name)
         {
             name = nameLabel.Text + "_" + name;
-            return Config.Get(name);
+            return Current.Config.Get(name);
         }
 
         public JoyButtonMode Mode
@@ -85,26 +70,30 @@ namespace MoJ.UI
                 }
                 else
                 {
-                    return JoyButtonMode.TriggerMouse;
+                    return JoyButtonMode.Trigger;
                 }
             }
         }
 
-        public object Rising
+        public Task Rising
         {
             get
             {
                 if (_rising.Text == string.Empty) return null;
-                return Enum.Parse(optionType, _rising.Text);
+                return (from t in Current.Config.Tasks 
+                        where t.Name == _rising.Text 
+                        select t).SingleOrDefault();
             }
         }
 
-        public object Falling
+        public Task Falling
         {
             get
             {
                 if (_falling.Text == string.Empty) return null;
-                return Enum.Parse(optionType, _falling.Text);
+                return (from t in Current.Config.Tasks
+                        where t.Name == _falling.Text
+                        select t).SingleOrDefault();
             }
         }
 
@@ -131,7 +120,7 @@ namespace MoJ.UI
             {
                 pictureBox1.BackColor = Color.Green;
 
-                if (Mode == JoyButtonMode.ToggleMouse)
+                if (Mode == JoyButtonMode.Toggle)
                 {
                     Toggle();
                 }
@@ -151,7 +140,7 @@ namespace MoJ.UI
                     pictureBox1.BackColor = SystemColors.Control;
                 }
 
-                if (Mode != JoyButtonMode.ToggleMouse)
+                if (Mode != JoyButtonMode.Toggle)
                 {
                     DoFalling();
                 }
@@ -160,31 +149,16 @@ namespace MoJ.UI
 
         private void DoRising()
         {
-            if (Rising == null) return;
-            if ((int)Rising == 0) return;
-            if (optionType == typeof(IO.Inputs.MouseEventFlags))
-            {
-                IO.Inputs.MouseEvent((IO.Inputs.MouseEventFlags)Rising);
-            }
-            else
-            {
-                IO.Inputs.KeybdEvent((IO.Inputs.KeybdEventFlags)Rising);
-            }
-            
+            var t = Rising;
+            if (t == null) return;
+            MoJ.Executor.RunThreaded(t);                       
         }
         
         private void DoFalling()
         {
-            if (Falling == null) return;
-            if ((int)Falling == 0) return;
-            if (optionType == typeof(IO.Inputs.MouseEventFlags))
-            {
-                IO.Inputs.MouseEvent((IO.Inputs.MouseEventFlags)Falling);
-            }
-            else
-            {
-                IO.Inputs.KeybdEvent((IO.Inputs.KeybdEventFlags)Falling);
-            }
+            var t = Falling;
+            if (t == null) return;          
+            MoJ.Executor.RunThreaded(t);
         }
 
         private void Toggle()
@@ -206,8 +180,8 @@ namespace MoJ.UI
             Set("mode", _mode.Text);
             Set("rising", _rising.Text);
             Set("falling", _falling.Text);
-            
-            Config.Save();
+
+            Current.Config.Save();
 
             if (((ComboBox)sender).Name == "_mode")
             {
@@ -216,15 +190,15 @@ namespace MoJ.UI
         }
 
         private void CheckMode()
-        {
-            if (_mode.Text.Contains("Key"))
-            {
-                KeyOptions();
-            }
-            else
-            {
-                MouseOptions();
-            }
+        {          
+            _rising.Items.Clear();
+            _falling.Items.Clear();
+
+            var keys = from t in Current.Config.Tasks
+                       select t.Name;
+          
+            _rising.Items.AddRange(keys.ToArray());
+            _falling.Items.AddRange(keys.ToArray());      
         }
     }
 }

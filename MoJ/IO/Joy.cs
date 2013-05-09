@@ -10,12 +10,13 @@ namespace MoJ.IO
     public class Joy : IDisposable
     {
 
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public event DeviceFoundEventHandler DeviceFound;
         public event JoystickStateEventHandler JoystickStateChanged;
         public Dictionary<string, DeviceInstance> sticks = new Dictionary<string, DeviceInstance>();
         Joystick stick;
         JoystickState state;
-        Logger Logger = new Logger("MoJ.Joy");
         System.Windows.Forms.Form _boundForm;
         DirectInput dinput;
 
@@ -53,12 +54,12 @@ namespace MoJ.IO
 
         public void GetSticks()
         {
-            using (Logger.Context("GetSticks"))
+            using (log4net.ThreadContext.Stacks["NDC"].Push("GetSticks"))
             {
 
                 foreach (DeviceInstance device in dinput.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly))
                 {
-                    Logger.Info(device.InstanceName);
+                    if(log.IsInfoEnabled)log.Info(device.InstanceName);
                     sticks.Add(device.InstanceName, device);
                 }
                 if (sticks.Count == 0)
@@ -75,7 +76,7 @@ namespace MoJ.IO
 
         public void ConnectDevice(DeviceInstance device)
         {
-            using (Logger.Context("ConnectDevice"))
+            using (log4net.ThreadContext.Stacks["NDC"].Push("ConnectDevice"))
             {
 
                 stick = new SharpDX.DirectInput.Joystick(dinput, device.InstanceGuid);
@@ -88,7 +89,7 @@ namespace MoJ.IO
 
                 foreach (DeviceObjectInstance deviceObject in stick.GetObjects())
                 {
-                    Logger.Debug("deviceObject {0}", deviceObject.Name);
+                    if(log.IsDebugEnabled) log.DebugFormat("deviceObject {0}", deviceObject.Name);
                     UpdateControl(deviceObject);
                 }
 
