@@ -35,9 +35,11 @@
             this.joystickName = new System.Windows.Forms.ComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageMain = new System.Windows.Forms.TabPage();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.tabPageTasks = new System.Windows.Forms.TabPage();
             this.tasksEditorControl1 = new MoJ.UI.TasksEditorControl();
             this.tabControl1.SuspendLayout();
+            this.tabPageMain.SuspendLayout();
             this.tabPageTasks.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -78,6 +80,7 @@
             // 
             // tabPageMain
             // 
+            this.tabPageMain.Controls.Add(this.richTextBox1);
             this.tabPageMain.Location = new System.Drawing.Point(4, 25);
             this.tabPageMain.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPageMain.Name = "tabPageMain";
@@ -86,6 +89,16 @@
             this.tabPageMain.TabIndex = 0;
             this.tabPageMain.Text = "General";
             this.tabPageMain.UseVisualStyleBackColor = true;
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox1.Location = new System.Drawing.Point(3, 2);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(802, 459);
+            this.richTextBox1.TabIndex = 0;
+            this.richTextBox1.Text = "";
             // 
             // tabPageTasks
             // 
@@ -124,6 +137,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.tabControl1.ResumeLayout(false);
+            this.tabPageMain.ResumeLayout(false);
             this.tabPageTasks.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -139,6 +153,7 @@
         private System.Windows.Forms.TabPage tabPageMain;
         private System.Windows.Forms.TabPage tabPageTasks;
         private TasksEditorControl tasksEditorControl1;
+        private System.Windows.Forms.RichTextBox richTextBox1;
 
     }
 }

@@ -12,6 +12,7 @@ namespace MoJ
         KeyDown,
         KeyUp,
         KeyPress,
+        TextEntry,
         MouseButtonDown,
         MouseButtonUp,
         MouseButtonClick

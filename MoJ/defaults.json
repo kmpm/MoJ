@@ -1,0 +1,89 @@
+{
+  "Values": {
+  
+  },
+  "Tasks": [
+    {
+      "Name": "LeftMouseDown",
+      "Description": null,
+      "Actions": [
+        {
+          "Method": "MouseButtonDown",
+          "Data": "left",
+          "Delay": 0
+        }
+      ]
+    },
+    {
+      "Name": "LeftMouseUp",
+      "Description": null,
+      "Actions": [
+        {
+          "Method": "MouseButtonUp",
+          "Data": "left",
+          "Delay": 0
+        }
+      ]
+    },
+    {
+      "Name": "Shift Down",
+      "Description": null,
+      "Actions": [
+        {
+          "Method": "KeyDown",
+          "Data": "shift",
+          "Delay": 0
+        }
+      ]
+    },
+    {
+      "Name": "Shift Up",
+      "Description": null,
+      "Actions": [
+        {
+          "Method": "KeyUp",
+          "Data": "shift",
+          "Delay": 0
+        }
+      ]
+    },
+    {
+      "Name": "Ctrl Down",
+      "Description": null,
+      "Actions": [
+        {
+          "Method": "KeyDown",
+          "Data": "control",
+          "Delay": 0
+        }
+      ]
+    },
+    {
+      "Name": "Ctrl Up",
+      "Description": null,
+      "Actions": [
+        {
+          "Method": "KeyUp",
+          "Data": "control",
+          "Delay": 0
+        }
+      ]
+    },
+	{
+      "Name": "Hello World",
+      "Description": null,
+      "Actions": [
+        {
+          "Method": "TextEntry",
+          "Data": "Hello World!",
+          "Delay": 0
+        },
+        {
+          "Method": "KeyPress",
+          "Data": "return",
+          "Delay": 0
+        }
+      ]
+    }
+  ]
+}

@@ -5,6 +5,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Threading;
+using System.Reflection;
 
 namespace MoJ
 {
@@ -81,6 +82,11 @@ namespace MoJ
 
         #endregion
 
+        public static void HelpText()
+        {
+            log.Debug("\r\n" + String.Join("\r\n", Enum.GetNames(typeof(WindowsInput.VirtualKeyCode))));
+        }
+
         public static void RunThreaded(Task t)
         {
             Thread thread = new Thread(RunThreadTask);
@@ -147,130 +153,40 @@ namespace MoJ
 
 
         /// <summary>
-        /// {shift} = KEYBDEVENTF_SHIFTVIRTUAL
+        /// Executes a keyboard style event
         /// </summary>
         /// <param name="a"></param>
         private static void RunKeyboard(Action a)
         {
             using (log4net.ThreadContext.Stacks["NDC"].Push("RunKeyboard"))
             {
+                string simulateName = "Simulate" + Enum.GetName(a.Method.GetType(), a.Method);                
+                MethodInfo theMethod = typeof(WindowsInput.InputSimulator).GetMethod(simulateName);
 
-
-                bool keyDown = false;
-                bool keyUp = false;
-
-                switch (a.Method)
-                {
-                    case ActionMethod.KeyDown:
-                        keyDown = true;
-                        break;
-                    case ActionMethod.KeyUp:
-                        keyUp = true;
-                        break;
-                    default:
-                        keyUp = true;
-                        keyDown = true;
-                        break;
-                }
-
-                if (log.IsDebugEnabled) log.DebugFormat("keyDown:{0}, keyUp:{1}", keyDown, keyUp);
-
-                var keyList = parseKeyboardData(a.Data);
-
-                var inputList = new List<NativeWIN32.INPUT>();
-                foreach (NativeWIN32.INPUT input in keyList)
-                {
-                    var flags = input.ki.dwFlags;
-                    var i = input;
-                    if (keyDown)
+                if (log.IsDebugEnabled) log.DebugFormat("Method '{0}' is '{1}',", simulateName, theMethod != null);
+                
+                if(theMethod != null){
+                    var parameters = theMethod.GetParameters();
+                    
+                    if(parameters[0].ParameterType == typeof(WindowsInput.VirtualKeyCode))
                     {
-                        i.ki.dwFlags = flags | NativeWIN32.KEYEVENTF_KEYDOWN;
-                        inputList.Add(i);
-                    }
-                    if (keyUp)
-                    {
-                        i.ki.dwFlags = flags | NativeWIN32.KEYEVENTF_KEYUP;
-                        inputList.Add(i);
-                    }
-                }
-                var inputs = inputList.ToArray();
-                if(log.IsDebugEnabled) log.DebugFormat("Sending {0} keystrokes", inputs.Length);
-                NativeWIN32.SendInput(1, ref inputs, Marshal.SizeOf(inputs));
-            }
-        }
-
-        public static List<NativeWIN32.INPUT> parseKeyboardData(string data)
-        {
-
-            var keyList = new List<NativeWIN32.INPUT>();
-
-            bool tag = false;
-            string buffer = string.Empty; ;
-            for (int i = 0; i < data.Length; i++)
-            {
-                char c = data[i];
-                if (tag)
-                {
-                    //we are in a tag
-                    if (c == '}')
-                    {
-                        tag = false;
-                        switch (buffer.ToLower())
+                        WindowsInput.VirtualKeyCode keyCode;
+                        bool found = Enum.TryParse<WindowsInput.VirtualKeyCode>(a.Data.ToUpper(), out keyCode);
+                        if (log.IsDebugEnabled) log.DebugFormat("KeyCode {0} is = {1}", a.Data, found);
+                        if (found)
                         {
-                            case "shift":
-                                var input = new NativeWIN32.INPUT
-                                {
-                                    type = NativeWIN32.INPUT_KEYBOARD,
-                                    ki = new NativeWIN32.KEYBDINPUT
-                                    {
-                                        wVk = (ushort)NativeWIN32.VK.SHIFT,
-                                        wScan = NativeWIN32.KEYEVENTSCAN_SHIFTSCANCODE,
-                                    }
-                                };
-                                keyList.Add(input);
-                                break;
+                            
+                            theMethod.Invoke(null, new object[] { keyCode });
                         }
-                        continue;
+
                     }
-                    else
+                    else if (parameters[0].ParameterType == typeof(String))
                     {
-                        buffer += c;
+                        //This should actually only be 'SimulateTextEntry'                     
+                        theMethod.Invoke(null, new object[] { a.Data });
                     }
-                }
-                else
-                {
-                    //we re not in a tag
-                    if (c == '{')
-                    {
-                        buffer = string.Empty;
-                        tag = true;
-                        continue;
-                    }
-                    else
-                    {
-                        var input = new NativeWIN32.INPUT
-                        {
-                            type = NativeWIN32.INPUT_KEYBOARD,
-                            ki = new NativeWIN32.KEYBDINPUT
-                            {
-                                wVk = 0,
-                                wScan = c,
-                                dwFlags = NativeWIN32.KEYEVENTF_UNICODE
-                            }
-                        };
-                        keyList.Add(input);
-                    }
-                }
+                }       
             }
-            return keyList;
         }
-
     }
-
-
-
-
-
-
-
 }

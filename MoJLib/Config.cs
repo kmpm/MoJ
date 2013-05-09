@@ -9,7 +9,9 @@ namespace MoJ
 {
     public class Config
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private const string CONFIGFILE = "settings.json";
+        private const string DEFAULTFILE = "defaults.json";
         private Dictionary<string, string> values = new Dictionary<string, string>();
         private TaskCollection _tasks = new TaskCollection();
 
@@ -60,15 +62,19 @@ namespace MoJ
             {
                 try
                 {
-                    var text = System.IO.File.ReadAllText(CONFIGFILE);
+                    var text = System.IO.File.ReadAllText(filename);
                     var config = JsonConvert.DeserializeObject<Config>(text);
                     return config;
                 }
                 catch (Exception ex)
                 {
-                    
+                    log.Warn("Config file not loaded", ex);
                     return new Config();
                 }
+            }
+            if (filename != DEFAULTFILE)
+            {
+                return LoadConfig(DEFAULTFILE);
             }
             return new Config();
         }

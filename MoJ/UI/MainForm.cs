@@ -30,7 +30,7 @@ namespace MoJ.UI
             Joy = new IO.Joy(this);
             Joy.DeviceFound += new DeviceFoundEventHandler(Joy_DeviceFound);
             Joy.JoystickStateChanged += new JoystickStateEventHandler(Joy_JoystickStateChanged);
-
+            richTextBox1.Text = Strings.General;
         }
 
         #region Joy Events
