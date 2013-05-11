@@ -62,7 +62,7 @@
             this.joystickName.Location = new System.Drawing.Point(72, 14);
             this.joystickName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.joystickName.Name = "joystickName";
-            this.joystickName.Size = new System.Drawing.Size(175, 24);
+            this.joystickName.Size = new System.Drawing.Size(316, 24);
             this.joystickName.TabIndex = 2;
             this.joystickName.SelectedIndexChanged += new System.EventHandler(this.joystickName_SelectedIndexChanged);
             // 

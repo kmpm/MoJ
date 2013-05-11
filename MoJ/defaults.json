@@ -25,6 +25,28 @@
         }
       ]
     },
+	{
+      "Name": "MiddleMouseDown",
+      "Description": null,
+      "Actions": [
+        {
+          "Method": "MouseButtonDown",
+          "Data": "middle",
+          "Delay": 0
+        }
+      ]
+    },
+    {
+      "Name": "MiddleMouseUp",
+      "Description": null,
+      "Actions": [
+        {
+          "Method": "MouseButtonUp",
+          "Data": "middle",
+          "Delay": 0
+        }
+      ]
+    },
     {
       "Name": "Shift Down",
       "Description": null,

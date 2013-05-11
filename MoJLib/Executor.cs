@@ -146,8 +146,16 @@ namespace MoJ
 
                 flag = textInfo.ToTitleCase(a.Data) + flag;
 
-                MouseEventFlags mef = (MouseEventFlags)Enum.Parse(typeof(MouseEventFlags), flag);
-                MouseEvent(mef);
+                MouseEventFlags mef;
+                bool found = Enum.TryParse<MouseEventFlags>(flag, out mef);
+                if (found)
+                {
+                    MouseEvent(mef);
+                }
+                else
+                {
+                    log.WarnFormat("Mouse button '{0}' does not exist", a.Data);
+                }
             }
         }
 

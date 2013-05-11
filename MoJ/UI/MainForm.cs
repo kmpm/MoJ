@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
@@ -33,6 +34,7 @@ namespace MoJ.UI
             Joy.DeviceFound += new DeviceFoundEventHandler(Joy_DeviceFound);
             Joy.JoystickStateChanged += new JoystickStateEventHandler(Joy_JoystickStateChanged);
             richTextBox1.Text = Strings.General;
+            this.Text += " " + Assembly.GetExecutingAssembly().GetName().Version;
         }
 
         #region Joy Events
