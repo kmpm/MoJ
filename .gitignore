@@ -4,6 +4,5 @@ bin/
 obj/
 TestResults/
 packages/
-.nuget
 
 *TemporaryKey.pfx
